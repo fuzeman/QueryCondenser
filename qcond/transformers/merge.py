@@ -1,5 +1,4 @@
 from operator import itemgetter
-from pprint import pprint
 from logr import Logr
 from qcond.helpers import simplify, strip
 from qcond.transformers.base import Transformer
@@ -102,7 +101,7 @@ class MergeTransformer(Transformer):
 
         for node in nodes:
             node.value = None
-            node._removing = True
+            node.dead = True
 
     def _merge(self, nodes, depth = 0):
         Logr.debug(str('\t' * depth) + str(nodes))
@@ -122,9 +121,9 @@ class MergeTransformer(Transformer):
 
                     Logr.debug("%s joined %s", nodes[x], top)
 
-                nodes[x]._removing = True
+                nodes[x].dead = True
 
-        nodes = [n for n in nodes if not n._removing]
+        nodes = [n for n in nodes if not n.dead]
 
         # Traverse further
         for node in nodes:
@@ -165,7 +164,7 @@ class DNode(object):
 
         self.weight = weight
 
-        self._removing = False
+        self.dead = False
 
     def join_right(self, nodes):
         for node in nodes:
@@ -184,7 +183,7 @@ class DNode(object):
         cur = self
 
         while cur is not None:
-            if cur.value and not cur._removing:
+            if cur.value and not cur.dead:
                 words.insert(0, cur.value)
                 total_score += cur.weight
 
@@ -197,5 +196,5 @@ class DNode(object):
             'DNode',
             self.value,
             self.weight,
-            ' REMOVING' if self._removing else ''
+            ' REMOVING' if self.dead else ''
         )

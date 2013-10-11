@@ -1,5 +1,4 @@
 import logging
-from pprint import pprint
 from time import sleep
 from logr import Logr
 import sys

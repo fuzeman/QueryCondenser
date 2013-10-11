@@ -1,4 +1,3 @@
-from pprint import pprint
 from logr import Logr
 from qcond.helpers import create_matcher
 from qcond.transformers.base import Transformer
