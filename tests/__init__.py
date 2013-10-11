@@ -1,1 +1,1 @@
-__author__ = 'Gardi_000'
+import compat
