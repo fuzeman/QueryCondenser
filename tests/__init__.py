@@ -1,1 +1,2 @@
-import compat
+from __future__ import absolute_import
+from . import compat
