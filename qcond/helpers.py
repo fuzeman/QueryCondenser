@@ -24,7 +24,3 @@ def create_matcher(a, b, swap_longest = True, case_sensitive = False):
         b = b.upper()
 
     return SequenceMatcher(None, a, b)
-
-
-def similarity(a, b, swap_longest = True, case_sensitive = False):
-    create_matcher(a, b, swap_longest, case_sensitive).quick_ratio()
