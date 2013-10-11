@@ -62,6 +62,6 @@ class TestQueryCondenser(TestCase):
             "La Leggenda Di Korra"
         ]), [
             'the korra',
-            'legend of korra',
-            'la leggenda di korra'
+            'la leggenda di korra',
+            'legend of korra'
         ])

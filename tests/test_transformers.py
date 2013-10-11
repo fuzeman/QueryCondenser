@@ -31,6 +31,20 @@ class TestMergeTransformer(TestCase):
             'apartment 23'
         ])
 
+        self.assertSequenceEqual(self.merge.run([
+            "The Legend of Korra",
+            "The Last Airbender The Legend of Korra",
+            "Avatar: The Legend of Korra",
+            "Legend of Korra",
+            "La Leggenda Di Korra"
+        ]), [
+            'the',
+            'the korra',
+            'avatar the legend of korra',
+            'la leggenda di korra',
+            'legend of korra'
+        ])
+
     def test_merge(self):
         pass
 
@@ -54,4 +68,15 @@ class TestSliceTransformer(TestCase):
             'Apt 23',
             "Don't Trust the B in Apt 23",
             'Dont Trust the Bitch in Apartment 23'
+        ])
+
+        self.assertSequenceEqual(self.slice.run([
+            "The Legend of Korra",
+            "The Last Airbender The Legend of Korra",
+            "Avatar: The Legend of Korra",
+            "Legend of Korra",
+            "La Leggenda Di Korra"
+        ]), [
+            'Legend of Korra',
+            'La Leggenda Di Korra'
         ])

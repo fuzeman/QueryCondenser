@@ -190,7 +190,7 @@ class DNode(object):
 
             cur = cur.parent
 
-        return total_score / len(words), ' '.join(words)
+        return float(total_score) / len(words), ' '.join(words)
 
     def __repr__(self):
         return '<%s value:"%s", weight: %s%s>' % (
