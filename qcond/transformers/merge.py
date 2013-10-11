@@ -1,6 +1,6 @@
 from operator import itemgetter
 from logr import Logr
-from qcond.helpers import simplify, strip
+from qcond.helpers import simplify, strip, first
 from qcond.transformers.base import Transformer
 from qcond.compat import xrange
 
@@ -169,11 +169,11 @@ class DNode(object):
 
     def join_right(self, nodes):
         for node in nodes:
-            duplicate = filter(lambda x: x.value == node.value, self.right)
+            duplicate = first(lambda x: x.value == node.value, self.right)
 
             if duplicate:
-                duplicate[0].weight += node.weight
-                duplicate[0].join_right(node.right)
+                duplicate.weight += node.weight
+                duplicate.join_right(node.right)
             else:
                 node.parent = self
                 self.right.append(node)
