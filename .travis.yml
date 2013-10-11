@@ -1,0 +1,14 @@
+language: python
+
+python:
+# - "2.5"
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+
+script:
+  - "py.test tests/ -v --cov qcond --cov-report term-missing"
+
+after_success:
+  - coveralls
