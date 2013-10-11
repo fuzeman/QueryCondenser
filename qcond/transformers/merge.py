@@ -83,6 +83,27 @@ class MergeTransformer(Transformer):
 
         return root
 
+    def get_nodes_right(self, value):
+        if type(value) is not list:
+            value = [value]
+
+        nodes = []
+
+        for node in value:
+            nodes.append(node)
+
+            for child in self.get_nodes_right(node.right):
+                nodes.append(child)
+
+        return nodes
+
+    def destroy_nodes_right(self, value):
+        nodes = self.get_nodes_right(value)
+
+        for node in nodes:
+            node.value = None
+            node._removing = True
+
     def _merge(self, nodes, depth = 0):
         Logr.debug(str('\t' * depth) + str(nodes))
 
@@ -94,6 +115,7 @@ class MergeTransformer(Transformer):
             if x > 0:
                 top.value = None
                 top.weight += nodes[x].weight
+                self.destroy_nodes_right(top.right)
 
                 if len(nodes[x].right):
                     top.join_right(nodes[x].right)
@@ -160,9 +182,6 @@ class DNode(object):
         words = []
         total_score = 0
         cur = self
-
-        if cur._removing:
-            return None, None
 
         while cur is not None:
             if cur.value and not cur._removing:
