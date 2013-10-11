@@ -2,6 +2,7 @@ from operator import itemgetter
 from logr import Logr
 from qcond.helpers import simplify, strip
 from qcond.transformers.base import Transformer
+from qcond.compat import xrange
 
 
 class MergeTransformer(Transformer):

@@ -1,6 +1,14 @@
+from unittest import TestCase
 import difflib
 import pprint
-from unittest import TestCase
+import sys
+
+PY3 = sys.version_info[0] == 3
+
+if PY3:
+    xrange = range
+else:
+    xrange = xrange
 
 
 _MAX_LENGTH = 80
