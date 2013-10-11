@@ -139,7 +139,7 @@ def kill_trailing_nodes(nodes):
             equal_perc = link.stats.get('equal', 0) / float(len(node.value))
             insert_perc = link.stats.get('insert', 0) / float(len(node.value))
 
-            Logr.debug('\t({:<24}) [{:02d}:{:02d} = {:02d} {:3.0f}% {:3.0f}%] -- {:<45}'.format(
+            Logr.debug('\t({0:<24}) [{1:02d}:{2:02d} = {3:02d} {4:3.0f}% {5:3.0f}%] -- {6:<45}'.format(
                 'd:%s, i:%s, r:%s' % (has_deletions, has_insertions, has_replacements),
                 len(node.value), len(link_node.value), link.stats.get('equal', 0),
                 equal_perc * 100, insert_perc * 100,
@@ -165,7 +165,7 @@ def kill_trailing_nodes(nodes):
 
     kill_nodes(nodes, killed_nodes)
 
-stats_print_format = "\t{:<8} ({:2d}:{:2d}) ({:2d}:{:2d})"
+stats_print_format = "\t{0:<8} ({1:2d}:{2:2d}) ({3:2d}:{4:2d})"
 
 
 def get_index_values(iterable, a, b):
