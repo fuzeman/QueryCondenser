@@ -16,6 +16,8 @@
 from difflib import SequenceMatcher
 import re
 import sys
+from logr import Logr
+from qcond.compat import xrange
 
 
 PY3 = sys.version_info[0] == 3
@@ -55,3 +57,28 @@ def first(function_or_none, sequence):
             return result[0]
 
     return None
+
+def sorted_append(sequence, item, func):
+    if not len(sequence):
+        sequence.insert(0, item)
+        return
+
+    x = 0
+    for x in xrange(len(sequence)):
+        if func(sequence[x]):
+            sequence.insert(x, item)
+            return
+
+    sequence.append(item)
+
+def itemsMatch(L1, L2):
+    return len(L1) == len(L2) and sorted(L1) == sorted(L2)
+
+def distinct(sequence):
+    result = []
+
+    for item in sequence:
+        if item not in result:
+            result.append(item)
+
+    return result

@@ -15,7 +15,7 @@
 
 from operator import itemgetter
 from logr import Logr
-from qcond.helpers import simplify, strip, first
+from qcond.helpers import simplify, strip, first, sorted_append, distinct
 from qcond.transformers.base import Transformer
 from qcond.compat import xrange
 
@@ -25,41 +25,13 @@ class MergeTransformer(Transformer):
         super(MergeTransformer, self).__init__()
 
     def run(self, titles):
-        titles = set([simplify(title) for title in titles])
+        titles = distinct([simplify(title) for title in titles])
+
+        Logr.info(str(titles))
 
         Logr.debug("------------------------------------------------------------")
 
-        root = []
-        tails = []
-
-        for title in titles:
-            Logr.debug(title)
-
-            cur = None
-            words = title.split(' ')
-
-            for wx in xrange(len(words)):
-                word = strip(words[wx])
-
-                if cur is None:
-                    cur = find_node(root, word)
-
-                    if cur is None:
-                        cur = DNode(word, None)
-                        root.append(cur)
-                else:
-                    parent = cur
-                    parent.weight += 1
-
-                    cur = find_node(parent.right, word)
-
-                    if cur is None:
-                        cur = DNode(word, parent)
-                        parent.right.append(cur)
-                    else:
-                        cur.weight += 1
-
-            tails.append(cur)
+        root, tails = self.parse(titles)
 
         Logr.debug("--------------------------PARSE-----------------------------")
 
@@ -77,24 +49,65 @@ class MergeTransformer(Transformer):
 
         Logr.debug("--------------------------RESULT-----------------------------")
 
-        results = {}
+        scores = {}
+        results = []
 
         for tail in tails:
-            score, value = tail.full_value()
+            score, value, original_value = tail.full_value()
 
-            if score and value:
-                if value not in results:
-                    results[value] = score
-                else:
-                    results[value] += score
+            if value in scores:
+                scores[value] += score
+            else:
+                results.append((value, original_value))
+                scores[value] = score
 
-        sorted_results = sorted(results.items(), key=itemgetter(1), reverse = True)
+                Logr.debug("%s %s %s", score, value, original_value)
+
+        sorted_results = sorted(results, key=lambda item: (scores[item[0]], item[1]), reverse = True)
 
         return [result[0] for result in sorted_results]
 
+    def parse(self, titles):
+        root = []
+        tails = []
+
+        for title in titles:
+            Logr.debug(title)
+
+            cur = None
+            words = title.split(' ')
+
+            for wx in xrange(len(words)):
+                word = strip(words[wx])
+
+                if cur is None:
+                    cur = find_node(root, word)
+
+                    if cur is None:
+                        cur = DNode(word, None, num_children=len(words) - wx, original_value=title)
+                        root.append(cur)
+                else:
+                    parent = cur
+                    parent.weight += 1
+
+                    cur = find_node(parent.right, word)
+
+                    if cur is None:
+                        Logr.debug("%s %d", word, len(words) - wx)
+                        cur = DNode(word, parent, num_children=len(words) - wx)
+                        sorted_append(parent.right, cur, lambda a: a.num_children < cur.num_children)
+                    else:
+                        cur.weight += 1
+
+            tails.append(cur)
+
+        return root, tails
+
     def merge(self, root):
         for x in range(len(root)):
+            Logr.debug(root[x])
             root[x].right = self._merge(root[x].right)
+            Logr.debug('=================================================================')
 
         return root
 
@@ -135,7 +148,7 @@ class MergeTransformer(Transformer):
                 if len(nodes[x].right):
                     top.join_right(nodes[x].right)
 
-                    Logr.debug("%s joined %s", nodes[x], top)
+                    Logr.debug("= %s joined %s", nodes[x], top)
 
                 nodes[x].dead = True
 
@@ -169,7 +182,7 @@ def find_node(node_list, value):
 
 
 class DNode(object):
-    def __init__(self, value, parent, right = None, weight = 1):
+    def __init__(self, value, parent, right=None, weight=1, num_children=None, original_value=None):
         self.value = value
 
         self.parent = parent
@@ -179,6 +192,9 @@ class DNode(object):
         self.right = right
 
         self.weight = weight
+
+        self.original_value = original_value
+        self.num_children = num_children
 
         self.dead = False
 
@@ -196,21 +212,27 @@ class DNode(object):
     def full_value(self):
         words = []
         total_score = 0
+
         cur = self
+        root = None
 
         while cur is not None:
             if cur.value and not cur.dead:
                 words.insert(0, cur.value)
                 total_score += cur.weight
 
+            if cur.parent is None:
+                root = cur
             cur = cur.parent
 
-        return float(total_score) / len(words), ' '.join(words)
+        return float(total_score) / len(words), ' '.join(words), root.original_value if root else None
 
     def __repr__(self):
-        return '<%s value:"%s", weight: %s%s>' % (
+        return '<%s value:"%s", weight: %s, num_children: %s%s%s>' % (
             'DNode',
             self.value,
             self.weight,
+            self.num_children,
+            (', original_value: %s' % self.original_value) if self.original_value else '',
             ' REMOVING' if self.dead else ''
         )

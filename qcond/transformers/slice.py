@@ -46,6 +46,9 @@ class SliceTransformer(Transformer):
 
         Logr.debug('---------------------------------------------------------------------')
 
+        # Sort remaining nodes by 'num_merges'
+        nodes = sorted(nodes, key=lambda n: n.num_merges, reverse=True)
+
         print_link_tree(nodes)
 
         Logr.debug('---------------------------------------------------------------------')
@@ -67,6 +70,7 @@ class SimNode(object):
         self.value = value
 
         self.dead = False
+        self.num_merges = 0
 
         self.links = {}  # {<other SimNode>: <SimLink>}
 
@@ -103,10 +107,12 @@ def kill_nodes_above(nodes, above_sim):
                 if len(link_node.value) > len(node.value):
                     Logr.debug('\t\tvery similar, killed this node')
                     link_node.dead = True
+                    node.num_merges += 1
                     killed_nodes.append(link_node)
                 else:
                     Logr.debug('\t\tvery similar, killed owner')
                     node.dead = True
+                    link_node.num_merges += 1
                     killed_nodes.append(node)
 
     kill_nodes(nodes, killed_nodes)
@@ -115,6 +121,7 @@ def kill_nodes_above(nodes, above_sim):
 def print_link_tree(nodes):
     for node in nodes:
         Logr.debug(node.value)
+        Logr.debug('\tnum_merges: %s', node.num_merges)
 
         if len(node.links):
             Logr.debug('\t========== LINKS ==========')
@@ -176,6 +183,7 @@ def kill_trailing_nodes(nodes):
                 Logr.debug('\t\tkilled this node')
 
                 link_node.dead = True
+                node.num_merges += 1
                 killed_nodes.append(link_node)
 
     kill_nodes(nodes, killed_nodes)
