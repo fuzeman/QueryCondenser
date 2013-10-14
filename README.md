@@ -2,7 +2,7 @@
 [![](https://travis-ci.org/fuzeman/QueryCondenser.png?branch=master)](https://travis-ci.org/fuzeman/Caper)
 [![](https://coveralls.io/repos/fuzeman/QueryCondenser/badge.png?branch=master)](https://coveralls.io/r/fuzeman/Caper?branch=master)
 
-Merges similar search queries to save network and service resources.
+Merge similar search queries to save network and service resources.
 
 ## Development
 
