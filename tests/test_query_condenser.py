@@ -25,7 +25,7 @@ class TestQueryCondenser(TestCase):
 
         self.qc = QueryCondenser()
 
-    def test_distinct(self):
+    def test_eureka_seven(self):
         self.assertSequenceEqual(self.qc.distinct([
             'Eureka Seven',
             'Eureka Seven Ao',
@@ -36,6 +36,7 @@ class TestQueryCondenser(TestCase):
             'eureka seven'
         ])
 
+    def test_apartment_23(self):
         self.assertSequenceEqual(self.qc.distinct([
             "Don't Trust the B---- in Apartment 23",
             "Apartment 23",
@@ -51,6 +52,7 @@ class TestQueryCondenser(TestCase):
             'apartment 23'
         ])
 
+    def test_samurai_bride(self):
         self.assertSequenceEqual(self.qc.distinct([
             "Hyakka Ryouran: Samurai Girls",
             "Samurai Bride",
@@ -60,6 +62,7 @@ class TestQueryCondenser(TestCase):
             'samurai bride'
         ])
 
+    def test_the_last_airbender(self):
         self.assertSequenceEqual(self.qc.distinct([
             "Avatar: The Last Airbender",
             "Avatar: The Legend of Aang",
@@ -69,6 +72,7 @@ class TestQueryCondenser(TestCase):
             'the last airbender'
         ])
 
+    def test_the_legend_of_korra(self):
         self.assertSequenceEqual(self.qc.distinct([
             "The Legend of Korra",
             "The Last Airbender The Legend of Korra",

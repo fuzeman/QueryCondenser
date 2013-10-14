@@ -26,9 +26,10 @@ class TestTransformer(TestCase):
 
 class TestMergeTransformer(TestCase):
     def setUp(self):
+        Logr.configure(logging.DEBUG)
         self.merge = MergeTransformer()
 
-    def test_run(self):
+    def test_apartment_23(self):
         self.assertSequenceEqual(self.merge.run([
             "Don't Trust the B---- in Apartment 23",
             "Apartment 23",
@@ -46,6 +47,7 @@ class TestMergeTransformer(TestCase):
             'apartment 23'
         ])
 
+    def test_legend_of_korra(self):
         self.assertSequenceEqual(self.merge.run([
             "The Legend of Korra",
             "The Last Airbender The Legend of Korra",
@@ -68,7 +70,7 @@ class TestSliceTransformer(TestCase):
     def setUp(self):
         self.slice = SliceTransformer()
 
-    def test_run(self):
+    def test_apartment_23(self):
         self.assertSequenceEqual(self.slice.run([
             "Don't Trust the B---- in Apartment 23",
             "Apartment 23",
@@ -85,6 +87,7 @@ class TestSliceTransformer(TestCase):
             'Dont Trust the Bitch in Apartment 23'
         ])
 
+    def test_legend_of_korra(self):
         self.assertSequenceEqual(self.slice.run([
             "The Legend of Korra",
             "The Last Airbender The Legend of Korra",
