@@ -18,6 +18,15 @@ from qcond.transformers.slice import SliceTransformer
 from qcond.transformers.strip_common import StripCommonTransformer
 
 
+__version_info__ = ('0', '1', '0')
+__version_branch__ = 'master'
+
+__version__ = "%s%s" % (
+    '.'.join(__version_info__),
+    '-' + __version_branch__ if __version_branch__ else ''
+)
+
+
 class QueryCondenser(object):
     def __init__(self):
         self.transformers = [
