@@ -84,3 +84,10 @@ class TestQueryCondenser(TestCase):
             'la leggenda di korra',
             'legend of korra'
         ])
+
+    def test_betas_single(self):
+        self.assertSequenceEqual(self.qc.distinct([
+            'Betas'
+        ]), [
+            'betas'
+        ])
